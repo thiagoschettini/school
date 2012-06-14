@@ -17,9 +17,21 @@ class Grade(models.Model):
 	def __unicode__(self):
 		return self.materia
 
-class Turma(models.Model):
+class Serie(models.Model):
 	serie = models.CharField(choices=SERIES,max_length=50)
-	nomeSala = models.CharField(blank=False, null=False, verbose_name='Sala', help_text='Nome ou código da sala',max_length=50)
+
+	def __unicode__(self):
+		return self.serie
+
+class NomeSala(models.Model):
+	nome = models.CharField(blank=False, null=False, verbose_name='Sala', help_text='Nome ou código da sala',max_length=50)
+
+	def __unicode__(self):
+		return self.nome
+
+class Turma(models.Model):
+	serie = models.ForeignKey(Serie, blank=False)
+	nomeSala = models.ForeignKey(NomeSala, blank=False)
 
 	grade = models.ManyToManyField(Grade)
 
@@ -56,7 +68,7 @@ class DiarioNotas(models.Model):
 class DiarioFaltas(models.Model):
 	aluno = models.ForeignKey(Aluno, blank=False)
 	materia = models.ForeignKey(Grade, blank=False)
-	faltas = models.CharField(blank=False, null=False, verbose_name="Nota",max_length=50)
+	data = models.DateTimeField(blank=False, verbose_name="Data da falta")
 
 	def __unicode__(self):
 		return self.aluno
