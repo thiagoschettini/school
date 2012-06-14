@@ -1,0 +1,15 @@
+{% for aluno in alunos %}
+	{{aluno.nomeAluno}} -- {{aluno.turma.serie}}{{aluno.turma.nomeSala}}<br><br>
+	{% for materia in aluno.turma.grade.all %}
+		{{materia.materia}}<br>
+	{% endfor %}<br><br>
+{% endfor %}
+============================================================================================<br>
+ITERANDO MANYTOMANY FIELD<br>
+============================================================================================<br>
+{% for turma in turmas %}
+	{{turma}}<br>
+	{% for materia in turma.grade.all %}
+		{{materia.materia}}<br>
+	{% endfor %}<br><br>
+{% endfor %}
