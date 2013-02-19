@@ -1,15 +1,83 @@
-{% for aluno in alunos %}
-	{{aluno.nomeAluno}} -- {{aluno.turma.serie}}{{aluno.turma.nomeSala}}<br><br>
-	{% for materia in aluno.turma.grade.all %}
-		{{materia.materia}}<br>
-	{% endfor %}<br><br>
-{% endfor %}
-============================================================================================<br>
-ITERANDO MANYTOMANY FIELD<br>
-============================================================================================<br>
-{% for turma in turmas %}
-	{{turma}}<br>
-	{% for materia in turma.grade.all %}
-		{{materia.materia}}<br>
-	{% endfor %}<br><br>
-{% endfor %}
+{% extends "base.html" %}
+{% block loginId %} {{ request.user.first_name }} {% endblock %}
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+      <li class="nav-header">Turmas</li>
+  {% for turma in turmas %}
+    <li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+  {% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+        <li><a href="/turma/nova/">Cadastrar Turma</a></li>
+        <li><a href="/professor/novo/">Cadastrar Professor</a></li>
+        <li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+        <li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+
+          <div class="hero-unit">
+            <h1>Olá, {{ request.user.first_name }}!</h1>
+            <p>Este sistema irá auxiliar no relacionamento escola-pais. Através dele é possível enviar comunicados,
+              conferir notas e faltas dos alunos e outras funções. Qualquer dúvida ou sugestão, sinta-se a vontade
+              para colaborar, enviando-nos um e-mail: schettini.thiago@gmail.com</p>
+            <!--<p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>-->
+          </div>
+          <div class="row-fluid">
+            <div class="span4">
+              <h2>Comunicados</h2>
+              <p>
+                {% if mensagens %}
+                {% for mensagem in mensagens %}
+                  <a href="/mensagem/{{ mensagem.pk }}">{{ mensagem.data_envio|date:"Y/m/d" }} - {{ mensagem.destinatario.first_name }} - {{ mensagem.assunto }}</a><br>
+                {% endfor %}
+                </p>
+                <p><a class="btn" href="/ver/mensagem/">Ver todas &raquo;</a></p>                
+                {% else %}
+                  Nenhum novo comunicado.
+                {% endif %}
+            </div><!--/span-->
+            <div class="span4">
+              {% ifequal request.user.get_profile.role "professor" %}
+              <h2>Minhas Turminhas</h2>
+              <p>
+                {% for turma in turmas %}
+                  <a href="/{{ turma.pk }}/edit/">{{turma}}</a><br>
+                {% endfor %}
+              </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+              {% endifequal %}
+
+              {% ifequal request.user.get_profile.role "secretaria" %}
+              <h2>Administração</h2>
+              <p>
+                <a href="/turma/nova/">Cadastrar Turma</a><br>
+                <a href="/professor/novo/">Cadastrar Professor</a><br>
+                <a href="/professor/materia/">Atribuir Matéria ao Professor</a><br>
+                <a href="/aluno/novo/">Cadastrar Aluno</a>
+              </p>
+              {% endifequal %}
+
+            </div><!--/span-->
+            <div class="span4">
+              <h2>Heading</h2>
+              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+            </div><!--/span-->
+          </div><!--/row-->
+          
+
+{% endblock %}

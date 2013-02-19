@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block loginId %} {{ prof.nome }} {% endblock %}
+
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+	  	<li class="nav-header">Turmas</li>
+	{% for turma in turmas %}
+		<li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+	{% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+      	<li><a href="/turma/nova/">Cadastrar Turma</a></li>
+      	<li><a href="/professor/novo/">Cadastrar Professor</a></li>
+      	<li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+      	<li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="well">
+	<h3>{{ aluno.turma }}</h3>
+	<h5>{{ aluno.nomeAluno }}</h5>
+</div>
+{{ d }}
+{% ifequal filtro 'nota' %}
+<h4>Notas:</h4>
+<form action="/{{ aluno.pk }}/diario/nota" method="post">{% csrf_token %}
+	<fieldset>
+		<input type="text" name="nota" placeholder="Nota..."><br>
+		<input type="text" name="total" placeholder="Pontos distribuídos..."><br>
+		<input type="text" name="referente" placeholder="Nota referente a..."><br>
+		<select name="materia">
+			<option>Matéria</option>
+			{% for materia in grade %}
+				<option value="{{ materia.pk }}">{{ materia.materia }}</option>
+			{% endfor %}
+		</select>
+		<br>
+		<input type="submit" name="subNota" value="Salvar" class="btn btn-primary">
+	</fieldset>
+</form>
+{% endifequal %}
+
+{% ifequal filtro 'falta' %}
+<h4>Faltas:</h4>
+<form action="/{{ aluno.pk }}/diario/falta" method="post">{% csrf_token %}
+	<fieldset>
+		<input type="text" name="dataFalta" id="datepicker" placeholder="Data..."><br>
+		<select name="materia">
+			<option>Matéria</option>
+			{% for materia in grade %}
+				<option value="{{ materia.pk }}">{{ materia.materia }}</option>
+			{% endfor %}
+		</select>
+		<br>
+		<input type="submit" name="subNota" value="Salvar" class="btn btn-primary">
+	</fieldset>
+</form>
+{% endifequal %}
+{% endblock %}
+{% block scripts %}
+  <script>
+  $(function() {
+    $( "#datepicker" ).datepicker({
+      showWeek: true,
+      firstDay: 1,
+      dateFormat: 'yy-mm-dd'
+    });
+  });
+  </script>
+{% endblock %}

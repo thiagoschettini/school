@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block loginId %} {{ aluno.nomeAluno }} {% endblock %}
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+	  	<li class="nav-header">Turmas</li>
+	{% for turma in turmas %}
+		<li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+	{% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+      	<li><a href="/turma/nova/">Cadastrar Turma</a></li>
+      	<li><a href="/professor/novo/">Cadastrar Professor</a></li>
+      	<li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+      	<li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="alert alert-info">
+	<h3>Meus Comunicados</h3>
+</div>
+
+<table class="table">
+<thead>
+    <tr>
+      	<th>De</th>
+      	<th>Assunto</th>
+      	<th>Data de envio</th>
+    </tr>
+</thead>
+<tbody>
+	{% for mensagem in mensagens %}
+	<tr>
+		<td>{% if not mensagem.lida %}<strong>{% endif %}<a href="/mensagem/{{ mensagem.pk }}">{{ mensagem.destinatario }}</a>{% if not mensagem.lida %}</strong>{% endif %}</td>
+		<td>{% if not mensagem.lida %}<strong>{% endif %}<a href="/mensagem/{{ mensagem.pk }}">{{ mensagem.assunto }}</a>{% if not mensagem.lida %}</strong>{% endif %}</td>
+		<td>{% if not mensagem.lida %}<strong>{% endif %}<a href="/mensagem/{{ mensagem.pk }}">{{ mensagem.data_envio }}</a>{% if mensagem.lida %}</strong>{% endif %}</td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

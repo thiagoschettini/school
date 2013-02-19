@@ -1,0 +1,57 @@
+professor: {{ prof }}
+grupo: {{ prof.user }}
+<br>turmas: <br>
+{% for turma in turmas %}
+	<a href="/{{ turma.pk }}/edit/">{{turma}}</a><br>
+{% endfor %}
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% for aluno in alunos %}
+	{{aluno.nomeAluno}} -- {{aluno.turma.serie}}{{aluno.turma.nomeSala}}<br><br>
+	{% for materia in aluno.turma.grade.all %}
+		{{materia.materia}}<br>
+	{% endfor %}<br><br>
+{% endfor %}
+============================================================================================<br>
+MATERIAS POR TURMA<br>
+============================================================================================<br>
+{% for turma in turmas %}
+	{{turma}}<br>
+	{% for materia in turma.grade.all %}
+		{{materia.materia}}<br>
+	{% endfor %}<br><br>
+{% endfor %}
+
+============================================================================================<br>
+PROFESSORES MATERIAS<br>
+============================================================================================<br>
+{% for prof in professores %}
+	<b>{{prof.nome}}</b> <br> 
+	{% for materia in prof.materia.all %}
+		{{materia.materia}}<br>
+	{% endfor %}
+	Turma: 
+	{% for turma in prof.turma.all %}
+		{{turma}}<br>
+	{% endfor %}
+	<br><br>
+{% endfor %}
+
+
+============================================================================================<br>
+ALUNOS POR TURMA PK=1 ++ NOTAS<br>
+============================================================================================<br>
+{{diarioClassDict.items}}
+
+<bR><bR><bR><bR><bR>
+{{turma}}<br>
+{% for aluno in alunoByTurma %}
+	{{aluno.nomeAluno}}  
+	{% for nota in notas %}
+		{% ifequal nota.aluno.pk aluno.pk %}
+			|| {{nota.materia}} - {{nota.nota}} ||
+		{% endifequal %}
+	{% endfor %}
+	<br><br>
+{% endfor %}

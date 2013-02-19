@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block loginId %} {{ aluno.nomeAluno }} {% endblock %}
+
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+	  	<li class="nav-header">Turmas</li>
+	{% for turma in turmas %}
+		<li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+	{% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+      	<li><a href="/turma/nova/">Cadastrar Turma</a></li>
+      	<li><a href="/professor/novo/">Cadastrar Professor</a></li>
+      	<li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+      	<li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="alert alert-info">
+	<h3>{{ turma }}</h3><br>
+	{{ aluno.nomeAluno }}
+</div>
+
+<table class="table">
+<thead>
+    <tr>
+      	<th>Matéria</th>
+      	<th>Faltas</th>
+      	<th>Notas</th>
+    </tr>
+</thead>
+<tbody>
+	{% for materia in turma.materia.all %}
+		<tr>
+			<td>
+				{{ materia.materia }}
+			</td>
+			<td>
+  			{% for falta in aluno.getFaltas %}
+      			{% ifequal falta.materia materia %}
+      				<small>
+      					{{ falta.data|date:"d/m/Y" }}<br>
+      				</small>
+      			{% endifequal %}
+  			{% endfor %}
+			{% for key, value in dataFaltas.items %}
+				{% ifequal key materia %}
+					{% for k, v in value %}
+						{% ifequal k aluno %}
+							<span class="badge badge-info">Total: {{ v }}</span>
+						{% endifequal %}
+					{% endfor %}
+				{% endifequal %}
+			{% endfor %}
+			</td>
+			<td>
+			{% for nota in aluno.getNotas %}
+  				{% ifequal nota.materia materia %}
+      				<small>
+      					{{ nota.referente }} - {{ nota.nota }}/{{ nota.valor }}<br>
+      				</small>
+      			{% endifequal %}
+      		{% endfor %}
+			{% for key, value in data.items %}
+				{% ifequal key materia %}
+					{% for k, v in value %}
+						{% ifequal k aluno %}
+							<span class="badge badge-warning">Total: {{ v }}</span>
+						{% endifequal %}
+					{% endfor %}
+				{% endifequal %}
+			{% endfor %}
+			</td>
+		</tr>	
+	{% endfor %}
+
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</tbody>
+</table>
+
+{% endblock %}

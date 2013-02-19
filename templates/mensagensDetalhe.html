@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block loginId %} {{ aluno.nomeAluno }} {% endblock %}
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+      <li class="nav-header">Turmas</li>
+  {% for turma in turmas %}
+    <li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+  {% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+        <li><a href="/turma/nova/">Cadastrar Turma</a></li>
+        <li><a href="/professor/novo/">Cadastrar Professor</a></li>
+        <li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+        <li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="alert alert-info">
+	<h3>Meus Comunicados</h3>
+</div>
+<div class="btn-toolbar">
+  <div class="btn-group">
+    <a class="btn" href="/ver/mensagem/"><i class="icon-arrow-left"></i> Voltar</a>
+    <a class="btn" href="/enviar/mensagem/"><i class="icon-pencil"></i> Escrever Mensagem</a>
+    <!--<a class="btn" href="#"><i class="icon-align-right"></i></a>
+    <a class="btn" href="#"><i class="icon-align-justify"></i></a>-->
+  </div>
+</div>
+<div class="well well-small">
+	<strong>De: {{ mensagem.destinatario.first_name }} {{ mensagem.destinatario.last_name }}</strong><br>
+	<strong>Data:</strong> {{ mensagem.data_envio }}<br>
+	<strong>Assunto:</strong> {{ mensagem.assunto }}
+</div>
+
+<div class="row-fluid">
+	<p>
+		{{ mensagem.mensagem }}
+	</p>
+
+</div>
+{% endblock %}

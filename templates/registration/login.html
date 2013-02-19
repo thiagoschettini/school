@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block contents %}
+<div id="right">
+<h1>Log in no Sistema</h1>
+
+{% if form.errors %}
+<p class="error">Corrija os erros abaixo:</p>
+Usuário e senha não conferem. Tente novamente.<br />
+Dica: Confira a tecla CAPS LOCK do se teclado!
+{% endif %}
+
+<form method="post" action="/accounts/login/?next=/">{% csrf_token %}
+<dl>
+<dt><label for="id_username">Usuário:</label>{% if form.username.errors %} <span class="error">{{ form.username.errors|join:", " }}</span>{% endif %}</dt>
+<dd>{{ form.username }}</dd>
+<dt><label for="id_password">Senha:</label>{% if form.password.errors %} <span class="error">{{ form.password.errors|join:", " }}</span>{% endif %}</dt>
+<dd>{{ form.password }}</dd>
+
+<dt><br />
+	<input type="submit" value="Log in no Sistema" /></dt>
+</dl>
+</form>
+<p>Caso não tenha uma conta de acesso, entre em contato com sua comissão.</p>
+<p><a href="{{ url_reiniciar_senha }}">Esqueceu a senha?</a></p>
+</div>
+{% endblock %}

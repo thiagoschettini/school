@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block loginId %} {{ request.user.first_name }} {% endblock %}
+
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+      <li class="nav-header">Turmas</li>
+  {% for turma in turmas %}
+    <li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+  {% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+        <li><a href="/turma/nova/">Cadastrar Turma</a></li>
+        <li><a href="/professor/novo/">Cadastrar Professor</a></li>
+        <li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+        <li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+
+		<div class="well">
+            <h3>{{ turma.serie }}{{ turma.nome }}</h3>
+            <!--<p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>-->
+        </div>
+		<div class="row-fluid">
+			{% for aluno in alunos %}
+				<a href="/{{ aluno.pk }}/boletim/">{{ aluno.nomeAluno }}</a><br />
+				<br />
+			{% endfor %}
+		</div>
+
+{% endblock %}

@@ -1,6 +1,9 @@
 from django.contrib import admin
 from classdiary.models import *
 
+class userProfileAdmin(admin.ModelAdmin):
+	pass
+
 class GradeAdmin(admin.ModelAdmin):
 	pass
 
@@ -25,6 +28,10 @@ class DiarioNotasAdmin(admin.ModelAdmin):
 class DiarioFaltasAdmin(admin.ModelAdmin):
 	pass
 
+class MensagensAdmin(admin.ModelAdmin):
+	pass	
+
+admin.site.register(userProfile, userProfileAdmin)
 admin.site.register(Grade, GradeAdmin)
 admin.site.register(Serie, SerieAdmin)
 admin.site.register(NomeSala, NomeSalaAdmin)
@@ -33,3 +40,4 @@ admin.site.register(Aluno, AlunoAdmin)
 admin.site.register(Professor, ProfessorAdmin)
 admin.site.register(DiarioNotas, DiarioNotasAdmin)
 admin.site.register(DiarioFaltas, DiarioFaltasAdmin)
+admin.site.register(Mensagens, MensagensAdmin)

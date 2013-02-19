@@ -1,0 +1,1 @@
+Formando, registre-se para a turma {{ userturma }}!

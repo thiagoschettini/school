@@ -1,0 +1,6 @@
+Alunos:<br>
+<select name="aluno" multiple class="span12">
+	{% for aluno in alunos %}
+	<option value="{{ aluno.pk }}">{{ aluno.nomeAluno }}</option>
+	{% endfor %}
+</select>

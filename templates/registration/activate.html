@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Confirmação de registro.</h1>
+
+  {% if account %}
+    <p>Obrigado por se registrar! Agora você já pode efetuar o <a href="{{ url_login }}">log in</a>.</p>
+  {% else %}
+    <p><strong>Infelizmente, algo deu errado no processo.</strong><br /></p>
+	<ul>
+	<li>Ou o link de ativação estava incorreto,</li>
+	<li>Ou você ultrapassou o limte permitido para a ativação,</li>
+	<li>Ou você já está registrado.</li>
+	</ul>
+	
+ 	<p>A chave de ativação é valida por {{ expiration_days }} dias após o registro.</p>
+  {% endif %}
+{% endblock %}

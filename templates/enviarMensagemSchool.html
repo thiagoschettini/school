@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block loginId %} {{ prof.nome }} {% endblock %}
+
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+	  	<li class="nav-header">Turmas</li>
+	{% for turma in turmas %}
+		<li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+	{% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+      	<li><a href="/turma/nova/">Cadastrar Turma</a></li>
+      	<li><a href="/professor/novo/">Cadastrar Professor</a></li>
+      	<li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+      	<li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="well">
+	<h3>Enviar Comunicados</h3>
+	{{ debug }}
+</div>
+<form action="/enviar/mensagem/" method="POST">{% csrf_token %}
+	<div class="row-fluid">
+		<div class="span6">
+			Para:<br>
+			<select name="funcionario" multiple class="span12">
+				{% for funcionario in funcionarios %}
+				<option value="{{ funcionario.pk }}">{{ funcionario.user.first_name }} {{ funcionario.user.last_name }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="span6" id="chooseAlunos">
+
+		</div>
+	</div>
+	<div class="row-fluid">
+	Assunto:<br>
+	<input type="text" name="assunto" value="" class="span12"><br>
+	Comunicado:<br>
+	<textarea name="mensagem" class="span12" rows="10"></textarea>
+	</div>
+	<br>
+	<input type="submit" name="subNota" value="Salvar" class="btn btn-primary">
+</form>
+
+{% endblock %}

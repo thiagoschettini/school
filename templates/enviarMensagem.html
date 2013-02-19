@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block loginId %} {{ prof.nome }} {% endblock %}
+
+
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+	  	<li class="nav-header">Turmas</li>
+	{% for turma in turmas %}
+		<li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+	{% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+      	<li><a href="/turma/nova/">Cadastrar Turma</a></li>
+      	<li><a href="/professor/novo/">Cadastrar Professor</a></li>
+      	<li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+      	<li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="well">
+	<h3>Enviar Comunicados</h3>
+	{{ debug }}
+</div>
+<form action="/enviar/mensagem/" method="POST">{% csrf_token %}
+	<div class="row-fluid">
+		<div class="span6">
+			Turma toda:<br>
+			<select name="turma" class="span12" id="chooseTurma">
+				<option value="0">Escolha uma turma...</option>
+				{% for turma in turmas %}
+				<option value="{{ turma.pk }}">{{ turma.serie }} - {{ turma.nomeSala }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="span6" id="chooseAlunos">
+			<!--Alunos:<br>
+			<select name="aluno" multiple class="span12">
+				{% for aluno in alunos %}
+				<option value="{{ aluno.pk }}">{{ aluno.nomeAluno }}</option>
+				{% endfor %}
+			</select>-->
+		</div>
+	</div>
+	<div class="row-fluid">
+	Assunto:<br>
+	<input type="text" name="assunto" value="" class="span12"><br>
+	Comunicado:<br>
+	<textarea name="mensagem" class="span12" rows="10"></textarea>
+	</div>
+	<br>
+	<input type="submit" name="subNota" value="Salvar" class="btn btn-primary">
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	$('#chooseTurma').on('change', function(){
+		$.ajax({
+		  url: '/aluno/by/turma/' + $(this).val(),
+		  success: function(data) {
+		    $('#chooseAlunos').html(data);
+		    //alert('Load was performed.');
+		  }
+		});
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% url registration_activate activation_key, token as url_activate %}
+
+Alguém, provavelmente você, registrou uma conta em nosso site usando este email. Se tiver mesmo sido você e queira continuar o processo de registro, clique no link abaixo ou copie e cole na barra de endereços do seu navegador de internet:
+
+http://{{ site }}{{ url_activate }}
+
+O registro será feito para a turma:
+{{ userturma }}
+
+Caso esta não seja a sua turma, entre em contato com a sua comissão
+
+Se você não não tiver feito a solicitação deste registro, você não receberá mais emails nossos, e a solicitação expirará automaticamente em {{ expiration_days }} dias.
+
+Obrigado!

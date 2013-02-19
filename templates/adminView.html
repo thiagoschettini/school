@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block loginId %} {{ prof.nome }} {% endblock %}
+
+{% block links %}
+  {% ifequal request.user.get_profile.role "professor" %}
+	  	<li class="nav-header">Turmas</li>
+	{% for turma in turmas %}
+		<li><a href="/{{ turma.pk }}/edit/">{{turma}}</a></li>
+	{% endfor %}
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "aluno" %}
+      <li class="nav-header">Notas e Faltas</li>
+      <li><a href="/boletim/">Boletim on-line</a></li>
+  {% endifequal %}
+
+  {% ifequal request.user.get_profile.role "secretaria" %}
+      <li class="nav-header">Turmas</li>
+      {% for turma in turmas %}
+        <li><a href="/{{ turma.pk }}/alunos/">{{turma}}</a></li>
+      {% endfor %} 
+      <li class="nav-header">Administrativa</li>
+      	<li><a href="/turma/nova/">Cadastrar Turma</a></li>
+      	<li><a href="/professor/novo/">Cadastrar Professor</a></li>
+      	<li><a href="/professor/materia/">Atribuir Matéria ao Professor</a></li>
+      	<li><a href="/aluno/novo/">Cadastrar Aluno</a></li>     
+  {% endifequal %}  
+
+{% endblock %}
+
+{% block contents %}
+<div class="well">
+	<h3>{{ turma.serie }} {{ turma.nomeSala }}</h3>
+</div>
+<!--<pre>
+					{% for key, value in data.items %}
+						{{ key }}
+						{% for k, v in value %}
+							<h4>{{ k }} - {{ v }}</h4>
+						{% endfor %}
+					{% endfor %}
+</pre>-->
+<blockquote>
+	<table class="table">
+	<thead>
+	    <tr>
+	      	<th>Aluno</th>
+	      	<th>Faltas</th>
+	      	<th>Notas</th>
+	    </tr>
+	</thead>
+	<tbody>
+	{% for aluno in alunos %}
+	    <tr>
+	      	<td>
+	      		<strong>{{ aluno.nomeAluno }}</strong>
+				<h6><a href="/{{ aluno.pk }}/diario/nota">Lançar Nota</a></h6>
+	      		<h6><a href="/{{ aluno.pk }}/diario/falta">Lançar Falta</a></h6>
+	      	</td>
+	      	<td>
+	      		{% for materia in grade %}
+	      			<strong>
+	      				{{ materia.materia }}: 
+						{% for key, value in dataFaltas.items %}
+							{% ifequal key materia %}
+								{% for k, v in value %}
+									{% ifequal k aluno %}
+										<span class="badge badge-info">{{ v }}</span>
+									{% endifequal %}
+								{% endfor %}
+							{% endifequal %}
+						{% endfor %}
+	      			</strong><br>
+	      			<blockquote>
+	      			{% for falta in aluno.getFaltas %}
+		      			{% ifequal falta.materia materia %}
+		      				<small>
+		      					<a href="/{{ falta.pk }}/edit/falta">{{ falta.data|date:"d/m/Y" }}</a>
+		      				</small>
+		      			{% endifequal %}
+	      			{% endfor %}
+	      			</blockquote>
+	      		{% endfor %}
+	      		<!--{% for falta in aluno.getFaltas %}
+		      		<strong>{{ falta.materia.materia }}</strong>: {{ falta.data|date:"d/m/Y" }}<br>
+	      		{% endfor %}-->
+	      	</td>
+			<td>
+	      		{% for materia in grade %}
+	      			<strong>{{ materia.materia }}:  
+					{% for key, value in data.items %}
+						{% ifequal key materia %}
+							{% for k, v in value %}
+								{% ifequal k aluno %}
+									<span class="badge badge-info">{{ v }}</span>
+								{% endifequal %}
+							{% endfor %}
+						{% endifequal %}
+					{% endfor %}
+	      			</strong><br>
+		      		<blockquote>
+		      		{% for nota in aluno.getNotas %}
+	      				{% ifequal nota.materia materia %}
+		      				<small>
+		      					<a href="/{{ nota.pk }}/edit/nota">{{ nota.referente }} - {{ nota.nota }}/{{ nota.valor }}</a>
+		      				</small>
+		      			{% endifequal %}
+		      		{% endfor %}
+		      		</blockquote>
+	      		{% endfor %}
+			</td>
+	    </tr>
+	{% endfor %}
+  	</tbody>
+	</table>
+</blockquote>
+{{ turma.materia.all }}
+{% endblock %}
